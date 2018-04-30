@@ -37,10 +37,11 @@
 	</style>
 </head>
 <body>
-
+	<h1>Vuelos para hoy en Aeropuertos de Cuba</h1>
+	<h2>{$datos["selected"]}</h2>
+	
 	<div id="vuelos">
-		<h1>Vuelos para hoy en aeropuertos de Cuba({$datos["selected"]})</h1>
-<small>Seleccione un aeropuerto</small>{select options="{$aeropuertos}" selected=""}
+		{link href="VUELOS AEROPUERTO" caption="Cambiar aeropuerto" desc="m:Cambiar aeropuerto [HAVANA,VARADERO,CIEN_FUEGOS,CAMAGUEY,HOLGUIN,SANTA_CLARA,CAYO_COCO,CAYO_LARGO,SANTIAGO,MANZANILLO]*" popup="true" wait="true"}
 
 {space15}
 
