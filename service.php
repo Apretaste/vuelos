@@ -108,20 +108,12 @@ class Vuelos extends Service
 				return $item->text();
 				
 			});
-			/*$datos["tiempos"]=$crawler->filter('div.sc-fZwumE.fKxxqu')->each(function(Crawler $itemm){
-				return $itemm->filter('div h4, div h5')->each(function( Crawler $i){
-					return $i->text();
-				}); 
-
-			});*/
+		
 
 			$datos["status"]=$crawler->filter('div.sc-ipZHIp.bveXXR div')->each(function(Crawler $item){
 				return $item->text();
 
 			});
-			
-
-
 
 			$datos["tiempos"]=$crawler->filter('div.sc-iGPElx.NxqEP:first-child div.sc-fZwumE.fKxxqu'/*'div.sc-fZwumE.fKxxqu:first-of-type'*/)->each(function(Crawler $itemm){
 				return $itemm->filter('div.sc-jXQZqI.geGMtw')->each(function(Crawler $i){
@@ -138,7 +130,6 @@ class Vuelos extends Service
 		$response->createFromTemplate("vuelo.tpl", ["datos"=>$datos]);
 		return $response;
 
-	
 	}
 	
 }
