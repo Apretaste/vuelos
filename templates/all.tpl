@@ -4,8 +4,9 @@
 	<title></title>
 
 	<style type="text/css">
+
 			#arrivals,#departures{
-				border: 1px solid black;
+				/*border: 1px solid black;*/
 			}
 			th{
 				background: silver;
@@ -32,19 +33,35 @@
 				text-decoration: none;
 
 			}
+			#datos a{
+				display: block;
+				padding: .5%;
+
+			}
+			#datos a:active{
+				opacity: .7;
+			}
+			#datos table{
+				width: 100%;
+			}
+			a span{
+				font-size: 1.4em;
+			}
+
 
 
 	</style>
 </head>
 <body>
 	<h1>Vuelos para hoy en Aeropuertos de Cuba</h1>
-	<h2>{$datos["selected"]}</h2>
+	<h2>{$datos["fecha"]}</h2>
+	<h2>{$datos["selected"]["descripcion"]}</h2>
 	
 	<div id="vuelos">
-		{link href="VUELOS AEROPUERTO" caption="Cambiar aeropuerto" desc="m:Cambiar aeropuerto [HAVANA,VARADERO,CIEN_FUEGOS,CAMAGUEY,HOLGUIN,SANTA_CLARA,CAYO_COCO,CAYO_LARGO,SANTIAGO,MANZANILLO]*" popup="true" wait="true"}
+		{link href="VUELOS AEROPUERTO" caption="Cambiar aeropuerto  <span>&#9992</span>" desc="m:Cambiar aeropuerto [HAVANA,VARADERO,CIEN_FUEGOS,CAMAGUEY,HOLGUIN,SANTA_CLARA,CAYO_COCO,CAYO_LARGO,SANTIAGO,MANZANILLO]*" popup="true" wait="true"}
 
 {space15}
-
+	<div id="datos">
 		<h2>LLegadas</h2>
 	<table id="arrivals">
 		
@@ -59,7 +76,15 @@
 		{foreach $datos["arrivals"] as $filas}
 		<tr>
 			{foreach $filas as $info}
-				<td>{$info}</td>
+
+				<td>
+					{if $filas[0]==$info}
+						{link href="VUELOS VUELO $info" caption=$info}
+					{else}
+						{$info}
+					{/if}
+
+				</td>
 			{/foreach}
 		</tr>
 		{/foreach}
@@ -68,6 +93,7 @@
 		{/if}
 		
 	</table>
+	
 	{space10}
 	<h2>Salidas</h2>
 	<table id="departures">
@@ -83,7 +109,14 @@
 		{foreach $datos["departures"] as $filas}
 		<tr>
 			{foreach $filas as $info}
-				<td>{$info}</td>
+				<td>
+					{if $filas[0]==$info}
+						{link href="VUELOS VUELO $info" caption=$info}
+					{else}
+						{$info}
+					{/if}
+
+				</td>
 			{/foreach}
 		</tr>
 		{/foreach}
@@ -91,6 +124,7 @@
 			<p>No hay proximas salidas para hoy en este aeropuerto</p>
 		{/if}
 	</table>
+	</div>
 	</div>
 
 </body>
