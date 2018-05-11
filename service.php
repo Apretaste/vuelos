@@ -2,15 +2,21 @@
 use Goutte\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
+
 class Vuelos extends Service
 {
+	private $diccionario;
 	/**
 	 * Function executed when the service is called
 	 *
 	 * @return Response
 	 */
+	public function Vuelos(){
+		$this->diccionario=array("Arrived"=>"Aterrizado","Scheduled"=>"Programado","Departed"=>"En vuelo","Landed"=>"Aterrizado","En Route"=>"En vuelo","Scheduled Delayed"=>"Programado Demorado","En Route Delayed"=>"En Vuelo demorado","Cancelled"=>"Cancelado");
+	}
 	public function _main(Request $request)
 	{
+		
 
 		$response = new Response();
 		$response->setCache("day");
@@ -28,6 +34,8 @@ class Vuelos extends Service
 		return $response;
 	}
 	private function busqueda($aero){
+
+			$aero=str_replace(" ","_",$aero);
 
 			$aeropuertos=[
 				"HAVANA"=>array("codigo"=>"HAV","desc"=>"Aeropuerto Internacional Jose Marti. La Havana"),
@@ -62,12 +70,21 @@ class Vuelos extends Service
 					return $item2->text();
 				});
 			});
+
 			//departures
 			$datos["departures"]=$crawler_departures->filter('.tableListingTable > tr')->each(function(Crawler $item){
 				return $item->filter('td:not(.header)')->each(function(Crawler $item2){
 					return $item2->text();
 				});
 			});
+
+			for($i=1;$i<count($datos["arrivals"]);$i++){
+				$datos["arrivals"][$i][4]=$this->traducir(trim($datos["arrivals"][$i][4]));
+			}
+			for($i=1;$i<count($datos["departures"]);$i++){
+				$datos["departures"][$i][4]=$this->traducir(trim($datos["departures"][$i][4]));
+			}
+			
 			$datos["fecha"]=date('d \d\e F \d\e Y');
 		return ["aeropuertos"=>$aeropuertos,"datos"=>$datos];
 	}
@@ -85,14 +102,15 @@ class Vuelos extends Service
 			$crawler=$client->request("GET",$url);
 			$datos=array();
 
-			$datos["vuelo"]=trim($request->query,'^');
+			$datos["vuelo"]=strtoupper(trim($request->query,'^'));
 			$datos["destinos"]=$crawler->filter('.sc-krDsej.jzsYOo > div')->each(function(Crawler $item){
 				return $item->filter('div div')->each(function(Crawler $item2){
 					return $item2->text();
 				});
 
 			});
-			$datos["departure_1"]=$crawler->filter('div.sc-fONwsr.lcarVJ:first-of-type  div.sc-VJcYb.isuJed div')->each(function(Crawler $item){
+			if(count($datos["destinos"])){
+				$datos["departure_1"]=$crawler->filter('div.sc-fONwsr.lcarVJ:first-of-type  div.sc-VJcYb.isuJed div')->each(function(Crawler $item){
 				return $item->text();
 				
 			});
@@ -105,16 +123,14 @@ class Vuelos extends Service
 				
 			});
 			$datos["arrival_2"]=$crawler->filter('div.sc-fONwsr.lcarVJ:nth-child(2) div.sc-hmXxxW.dLzkGK div.sc-TFwJa.dKHRdN')->each(function(Crawler $item){
-				return $item->text();
-				
+				return $item->text();	
 			});
 		
 
-			$datos["status"]=$crawler->filter('div.sc-ipZHIp.bveXXR div')->each(function(Crawler $item){
+			$datos["status"]=$crawler->filter('div.sc-ipZHIp.bveXXR div,div.sc-ipZHIp.kchXTD div')->each(function(Crawler $item){
 				return $item->text();
 
 			});
-
 			$datos["tiempos"]=$crawler->filter('div.sc-iGPElx.NxqEP:first-child div.sc-fZwumE.fKxxqu'/*'div.sc-fZwumE.fKxxqu:first-of-type'*/)->each(function(Crawler $itemm){
 				return $itemm->filter('div.sc-jXQZqI.geGMtw')->each(function(Crawler $i){
 					return $i->filter('h4,h5')->each(function( Crawler $j){
@@ -123,6 +139,14 @@ class Vuelos extends Service
 				}); 
 
 			});
+			$datos["status"][0]=$this->traducir($datos["status"][0]);
+			$datos["retrazo"]=false;
+			if(strpos($datos["status"][1],"elayed")){
+				$datos["retrazo"]=true;
+			}
+			}
+
+			
 
 			$response = new Response();
 		$response->setCache("day");
@@ -131,5 +155,12 @@ class Vuelos extends Service
 		return $response;
 
 	}
-	
+	public function traducir($estatus){
+		if(array_key_exists($estatus,$this->diccionario)){
+		return $this->diccionario[$estatus];
+		}
+		else{
+			return $estatus;
+		}
+	}
 }

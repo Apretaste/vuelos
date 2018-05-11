@@ -10,6 +10,13 @@
 		#detalle{
 			width: 100%;
 		}
+		#error{
+			text-align: center;
+			background: #4bae49;
+			color: white;
+			padding: 50px;
+			font-size: 2em;
+		}
 		#encabezados{
 			background: #4bae49;
 			width: 100%;
@@ -96,14 +103,11 @@
 			#horas div div{
 				display: inline-block;
 				width: 45%;
-				text-align: center;
-				
+				text-align: center;		
 			}
 			#horas  div:nth-child(2) div{
 				font-size: 1.5em;
 				font-weight: bold;
-
-
 			}
 			.#encabezados h2{
 				color: #fff;
@@ -123,7 +127,9 @@
 				display: inline-block;
 				transform: rotate(20deg);
 			}
-
+			.retrazado{
+				background:#8B8B29;
+			}
 
 		@media(max-width: 768px){
 			#encabezados .principal:nth-child(2),#encabezados .principal:nth-child(3){
@@ -146,9 +152,12 @@
 	</style>
 </head>
 <body>
+	
 	<div id="detalle">
 		{link href="VUELOS" caption="Todos los vuelos"}
-		<div id="encabezados">
+		{if count($datos["destinos"])} 
+
+		<div id="encabezados" {if $datos["retrazo"]==true} style="background:#8B8B29;"{/if}>
 			<div class="negrita principal">
 				<h2>Vuelo <span class="icono-mediano">&#9992<span></h2>
 				{$datos["vuelo"]}
@@ -160,15 +169,15 @@
 					{/foreach}
 				</div>
 			{/foreach}
-		<div class=" negrita principal" id="status">
+		<div class=" negrita principal" id="status" {if $datos["retrazo"]===true} style="background:#E3D822;"{/if}>
 			{foreach $datos["status"] as $status}
-				<div>{$status}</div>
+				<div {if $datos["retrazo"]==true} style="color:#000;"{/if}>{$status}</div>
 			{/foreach}
 		</div>
 		</div>
-		<div id="datos">
+		<div id="datos" {if $datos["retrazo"]===true} style="background:#4E5323;"{/if}>
 			
-			<div class="det">
+			<div class="det" {if $datos["retrazo"]===true} style="background:#464B1F;"{/if}>
 				<h3>Origen<span id="origen">&#9992</span></h3>
 				{foreach $datos["departure_1"] as $info}
 					<div>{$info}</div>
@@ -191,7 +200,7 @@
 				</div>
 				
 			</div>
-			<div class="det">
+			<div class="det" {if $datos["retrazo"]===true} style="background:#464B1F;"{/if}>
 				<h3>Destino<span id="destino">&#9992</span></h3>
 				{foreach $datos["arrival_1"] as $info}
 					<div>{$info}</div>
@@ -235,6 +244,11 @@
 			</div>
 
 		</div>
+		{else}
+			<div id="error" class="negrita">
+				<p>No hay información sobre el vuelo especificado</p>
+			</div>
+		{/if}
 		</div>
 		
 	</div>
