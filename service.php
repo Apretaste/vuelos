@@ -34,7 +34,7 @@ class Vuelos extends Service
 		return $response;
 	}
 	private function busqueda($aero){
-
+	date_default_timezone_set("America/Havana");
 			$aero=str_replace(" ","_",$aero);
 
 			$aeropuertos=[
@@ -89,6 +89,7 @@ class Vuelos extends Service
 		return ["aeropuertos"=>$aeropuertos,"datos"=>$datos];
 	}
 	public function _vuelo(Request $request){
+		date_default_timezone_set("America/Havana");
 		$fecha=date("Y/n/j");
 
 		$param=str_replace(" ","/",$request->query);
