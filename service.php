@@ -12,18 +12,15 @@ class Vuelos extends Service
 	 * @return Response
 	 */
 	public function Vuelos(){
-		$this->diccionario=array("Arrived"=>"Aterrizado","Scheduled"=>"Programado","Departed"=>"En vuelo","Landed"=>"Aterrizado","En Route"=>"En vuelo","Scheduled Delayed"=>"Programado Demorado","En Route Delayed"=>"En Vuelo demorado","Cancelled"=>"Cancelado");
+		$this->diccionario=array("Arrived"=>"Aterrizado","Scheduled"=>"Programado","Departed"=>"En vuelo","Landed"=>"Aterrizado","En Route"=>"En vuelo","Scheduled Delayed"=>"Programado Demorado","En  Route  Delayed"=>"En Vuelo demorado","Cancelled"=>"Cancelado");
 	}
 	public function _main(Request $request)
 	{
-		
-
 		$response = new Response();
 		$response->setCache("day");
 		$response->setResponseSubject("Aeropuertos de Cuba");
 		$response->createFromTemplate("all.tpl", $this->busqueda('HAVANA'));
-		return $response;
-	
+		return $response;	
 	}
 	
 	public function _aeropuerto(Request $request){
@@ -34,6 +31,7 @@ class Vuelos extends Service
 		return $response;
 	}
 	private function busqueda($aero){
+		date_default_timezone_set("America/Havana");
 
 			$aero=str_replace(" ","_",$aero);
 
@@ -89,6 +87,7 @@ class Vuelos extends Service
 		return ["aeropuertos"=>$aeropuertos,"datos"=>$datos];
 	}
 	public function _vuelo(Request $request){
+		date_default_timezone_set("America/Havana");
 		$fecha=date("Y/n/j");
 
 		$param=str_replace(" ","/",$request->query);
@@ -103,36 +102,36 @@ class Vuelos extends Service
 			$datos=array();
 
 			$datos["vuelo"]=strtoupper(trim($request->query,'^'));
-			$datos["destinos"]=$crawler->filter('.sc-krDsej.jzsYOo > div')->each(function(Crawler $item){
+			$datos["destinos"]=$crawler->filter('.sc-hmXxxW.kktKib > div')->each(function(Crawler $item){
 				return $item->filter('div div')->each(function(Crawler $item2){
 					return $item2->text();
 				});
 
 			});
 			if(count($datos["destinos"])){
-				$datos["departure_1"]=$crawler->filter('div.sc-fONwsr.lcarVJ:first-of-type  div.sc-VJcYb.isuJed div')->each(function(Crawler $item){
+				$datos["departure_1"]=$crawler->filter('div.sc-jtggT.FtBAB:first-of-type  div.sc-ebFjAB.cDRKgy div')->each(function(Crawler $item){
 				return $item->text();
 				
 			});
-			$datos["departure_2"]=$crawler->filter('div.sc-fONwsr.lcarVJ:first-of-type div.sc-hmXxxW.dLzkGK div.sc-TFwJa.dKHRdN')->each(function(Crawler $item){
+			$datos["departure_2"]=$crawler->filter('div.sc-jtggT.FtBAB:first-of-type div.sc-ebFjAB.bAYjan div.sc-VJcYb.fnvAiW')->each(function(Crawler $item){
 				return $item->text();
 				
 			});
-			$datos["arrival_1"]=$crawler->filter('div.sc-fONwsr.lcarVJ:last-of-type  div.sc-VJcYb.isuJed div')->each(function(Crawler $item){
+			$datos["arrival_1"]=$crawler->filter('div.sc-jtggT.FtBAB:last-of-type  div.sc-ebFjAB.cDRKgy div')->each(function(Crawler $item){
 				return $item->text();
 				
 			});
-			$datos["arrival_2"]=$crawler->filter('div.sc-fONwsr.lcarVJ:nth-child(2) div.sc-hmXxxW.dLzkGK div.sc-TFwJa.dKHRdN')->each(function(Crawler $item){
+			$datos["arrival_2"]=$crawler->filter('div.sc-jtggT.FtBAB:nth-child(2) div.sc-ebFjAB.bAYjan div.sc-VJcYb.fnvAiW')->each(function(Crawler $item){
 				return $item->text();	
 			});
 		
 
-			$datos["status"]=$crawler->filter('div.sc-ipZHIp.bveXXR div,div.sc-ipZHIp.kchXTD div')->each(function(Crawler $item){
+			$datos["status"]=$crawler->filter('div.sc-cooIXK.cyPgjb div,div.sc-cooIXK.ftwwRJ div')->each(function(Crawler $item){
 				return $item->text();
 
 			});
-			$datos["tiempos"]=$crawler->filter('div.sc-iGPElx.NxqEP:first-child div.sc-fZwumE.fKxxqu'/*'div.sc-fZwumE.fKxxqu:first-of-type'*/)->each(function(Crawler $itemm){
-				return $itemm->filter('div.sc-jXQZqI.geGMtw')->each(function(Crawler $i){
+			$datos["tiempos"]=$crawler->filter('div.sc-eKZiaR.DVGzp:first-child div.sc-jtRlXQ.iarms'/*'div.sc-fZwumE.fKxxqu:first-of-type'*/)->each(function(Crawler $itemm){
+				return $itemm->filter('div.sc-likbZx.eNvxJg')->each(function(Crawler $i){
 					return $i->filter('h4,h5')->each(function( Crawler $j){
 						return $j->text();
 					});

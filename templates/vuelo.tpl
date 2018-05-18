@@ -238,7 +238,7 @@
 					{/foreach}
 				{/foreach}
 				{else}
-					<p>No hay informacion del tiempo de vuelo. El vuelo no ha despegado</p>
+					<p>No hay informacion del tiempo de vuelo.</p>
 
 				{/if}
 			</div>
