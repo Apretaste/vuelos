@@ -31,7 +31,9 @@ class Vuelos extends Service
 		return $response;
 	}
 	private function busqueda($aero){
+
 		date_default_timezone_set("America/Havana");
+
 
 			$aero=str_replace(" ","_",$aero);
 
