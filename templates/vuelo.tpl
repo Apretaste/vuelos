@@ -97,18 +97,7 @@
 				padding: 1%;
 				text-decoration: none;
 			}
-			#horas{
-				margin-top: 40px;
-			}
-			#horas div div{
-				display: inline-block;
-				width: 45%;
-				text-align: center;		
-			}
-			#horas  div:nth-child(2) div{
-				font-size: 1.5em;
-				font-weight: bold;
-			}
+			
 			.#encabezados h2{
 				color: #fff;
 			}
@@ -130,7 +119,37 @@
 			.retrazado{
 				background:#8B8B29;
 			}
+			.centrado{
+				text-align: center;
+			}
 
+		/***********nuevp estilo*******************/
+		#head{
+			height: 3em;
+			background-color: #1C621B;
+			color: white;
+			font-size: 2.5em;
+			font-weight: bold;
+			text-align: center;
+		}
+		#aerolinea{
+			font-size: .8em;
+		}
+		#estado{
+			background-color: #FF7811;
+			font-size: .5em;
+			font-size: 1.5em;
+			color: white;
+
+		}
+		.horas h2{
+			text-align: center;
+		}
+		.horas > div{
+			display: inline-block;
+			width: 48%;
+			text-align: center;
+		}
 		@media(max-width: 768px){
 			#encabezados .principal:nth-child(2),#encabezados .principal:nth-child(3){
 				display: none;
@@ -145,8 +164,15 @@
 				display: block;
 				width: 100%;
 				margin: 0;
-				text-align: center;
+				text-align: left;
 			} 
+			.det{
+				margin-bottom: 1em;
+			}
+			div{
+				text-align: left;
+			}
+
 		}
 
 	</style>
@@ -155,100 +181,98 @@
 	
 	<div id="detalle">
 		{link href="VUELOS" caption="Todos los vuelos"}
-		{if count($datos["destinos"])} 
 
-		<div id="encabezados" {if $datos["retrazo"]==true} style="background:#8B8B29;"{/if}>
-			<div class="negrita principal">
-				<h2>Vuelo <span class="icono-mediano">&#9992<span></h2>
-				{$datos["vuelo"]}
-			</div>
-			{foreach $datos["destinos"] as $valor}
-				<div class="principal">
-					{foreach $valor as $i}	
-						<div>{$i}</div>
-					{/foreach}
-				</div>
-			{/foreach}
-		<div class=" negrita principal" id="status" {if $datos["retrazo"]===true} style="background:#E3D822;"{/if}>
-			{foreach $datos["status"] as $status}
-				<div {if $datos["retrazo"]==true} style="color:#000;"{/if}>{$status}</div>
-			{/foreach}
-		</div>
-		</div>
-		<div id="datos" {if $datos["retrazo"]===true} style="background:#4E5323;"{/if}>
+		<div id="encabezados">
 			
-			<div class="det" {if $datos["retrazo"]===true} style="background:#464B1F;"{/if}>
-				<h3>Origen<span id="origen">&#9992</span></h3>
-				{foreach $datos["departure_1"] as $info}
-					<div>{$info}</div>
-
-				{/foreach}
-				<div id="horas">
-					<div>
-						<div>
-							Programado
-						</div>
-						<div>
-							Salida/Estimado
-						</div>
-					</div>
-					<div>
-						{foreach $datos["departure_2"] as $hora}
-							<div>{$hora}</div>
-						{/foreach}
-					</div>
-				</div>
+			<div id="head">
+				<div id="numero">{$datos["num_vuelo"][0]}</div>
+				<div id="aerolinea">{$datos["aerolinea"][0]}</div>
 				
 			</div>
-			<div class="det" {if $datos["retrazo"]===true} style="background:#464B1F;"{/if}>
-				<h3>Destino<span id="destino">&#9992</span></h3>
-				{foreach $datos["arrival_1"] as $info}
-					<div>{$info}</div>
-
-				{/foreach}
-				<div id="horas">
-					<div>
-						<div>
-							Programado
-						</div>
-						<div>
-							llegada/Estimado
-						</div>
-					</div>
-					<div>
-						{foreach $datos["arrival_2"] as $hora}
-							<div>{$hora}</div>
-						{/foreach}
-					</div>
-				</div>
+			
+			
+		</div>
+		<div id="datos" >
+			{if count($datos['dep'])>1}
+				<div class="centrado">{$datos["titulo-secundario"][0]}</div>
+				<div id="estado" class="centrado">{$datos["status-vuelo"][0]}</div>
 				
-			</div>
-			</div>
-			<div id="otros">
-			<div id="tiempos">
-				<h2>Tiempos</h2>
-				{if count($datos["tiempos"])}
-				{foreach $datos["tiempos"] as $tiempos}
-					{foreach $tiempos as $bloque}
-						<div>
-							{foreach $bloque as $valor}
-								<div>{$valor}</div>
-							{/foreach}
-						</div>
+				<div class="det">
+					<h3>Origen<span id="origen">&#9992</span></h3>
+					{foreach $datos["dep"][0] as $info}
+						<div>{$info}</div>
+					
 					{/foreach}
-				{/foreach}
-				{else}
-					<p>No hay informacion del tiempo de vuelo.</p>
+					
+				</div>
+				<div class="det">
+					<h3>Destino<span id="destino">&#9992</span></h3>
+					{foreach $datos["arr"][0] as $info}
+						<div>{$info}</div>
+					{/foreach}
+			
+				</div>
+				<h2 class="centrado">{$datos["duracion"]}</h2>
+				<div class="centrado">{$datos["titulo-secundario"][1]}</div>
+				<div id="estado" class="centrado">{$datos["status-vuelo"][1]}</div>
+				<div class="det">
+					<h3>Origen<span id="origen">&#9992</span></h3>
+					{foreach $datos["dep"][1] as $info}
+						<div>{$info}</div>
 
-				{/if}
+					{/foreach}
+					
+				</div>
+				<div class="det">
+					<h3>Destino<span id="destino">&#9992</span></h3>
+					{foreach $datos["arr"][1] as $info}
+						<div>{$info}</div>
+
+					{/foreach}
+			
+				</div>
+				<h2 class="centrado">{$datos["duracion"]}</h2>
+			{else}
+				<div class="centrado">{$datos["titulo-secundario"][0]}</div>
+			<div class="det">
+				<h3>Origen<span id="origen">&#9992</span></h3>
+				{foreach $datos["dep"][0] as $info}
+					<div>{$info}</div>
+
+				{/foreach}
+			
+			</div>
+			<div class="det">
+				<h3>Destino<span id="destino">&#9992</span></h3>
+				{foreach $datos["arr"][0] as $info}
+					<div>{$info}</div>
+
+				{/foreach}
+			
+			</div>
+
+			{/if}
+			
+			
+			
+		</div>
+		<div class="horas">
+			<h2>Hora actual</h2>
+			<div id="hora-actuale-1">
+				
+				{foreach $datos["hora-actual-1"] as $info}
+					<div>{$info}</div>
+				{/foreach}
+			</div>
+			<div class="hora-actual-2">
+			
+				{foreach $datos["hora-actual-2"] as $info}
+					<div>{$info}</div>
+				{/foreach}
 			</div>
 
 		</div>
-		{else}
-			<div id="error" class="negrita">
-				<p>No hay información sobre el vuelo especificado</p>
-			</div>
-		{/if}
+		
 		</div>
 		
 	</div>

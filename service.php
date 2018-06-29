@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * Apretaste Vuelos Service
+ *
+ * @author vilferalvarez
+ * @version 2.0
+ */
+
+
 use Goutte\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -88,73 +97,102 @@ class Vuelos extends Service
 			$datos["fecha"]=date('d \d\e F \d\e Y');
 		return ["aeropuertos"=>$aeropuertos,"datos"=>$datos];
 	}
+
+	/**
+	 * Busqueda de Vuelo
+	 *
+	 * @author kumahacker
+	 * @param string $q
+	 *
+	 * @return vuelo.tpl
+	 */
 	public function _vuelo(Request $request){
 		date_default_timezone_set("America/Havana");
 		$fecha=date("Y/n/j");
+		$search=trim(trim($request->query,'^'));
+		$vuelo=substr($search,0,strpos($search,"-"));
+		$vuelo=strtolower(str_replace(" ","",$vuelo));
 
-		$param=str_replace(" ","/",$request->query);
-		$param=trim(trim($param,'^'),'/');
-
-		$url="https://www.flightstats.com/v2/flight-tracker/".$param."/".$fecha."/?utm_source=49e3481552e7c4c9:32c90f00:12769f08bd4:6218&utm_medium=cpc&utm_campaign=weblet";
+		$search=strtolower($vuelo.str_replace(" ","-",substr($search,strpos($search,"-")+1,strlen($search))));
+		
+		
+		$url="https://es.aviability.com/estado-de-vuelo/estado-$search";
+		
 		$client = new Client();
 			$guzzle = $client->getClient();
 			$client->setClient($guzzle);
-
 			$crawler=$client->request("GET",$url);
 			$datos=array();
+			$datos["titulo-principal"]=$crawler->filter('h1')->each(function(Crawler $item){
+				return $item->text();
+			});
 
 			$datos["vuelo"]=strtoupper(trim($request->query,'^'));
-			$datos["destinos"]=$crawler->filter('.sc-hmXxxW.kktKib > div')->each(function(Crawler $item){
-				return $item->filter('div div')->each(function(Crawler $item2){
-					return $item2->text();
-				});
 
-			});
-			if(count($datos["destinos"])){
-				$datos["departure_1"]=$crawler->filter('div.sc-jtggT.FtBAB:first-of-type  div.sc-ebFjAB.cDRKgy div')->each(function(Crawler $item){
+
+			$datos["titulo-secundario"]=$crawler->filter('h2')->each(function(Crawler $item){
 				return $item->text();
-				
 			});
-			$datos["departure_2"]=$crawler->filter('div.sc-jtggT.FtBAB:first-of-type div.sc-ebFjAB.bAYjan div.sc-VJcYb.fnvAiW')->each(function(Crawler $item){
+			$datos["num_vuelo"]=$crawler->filter('.stn')->each(function(Crawler $item){
 				return $item->text();
-				
 			});
-			$datos["arrival_1"]=$crawler->filter('div.sc-jtggT.FtBAB:last-of-type  div.sc-ebFjAB.cDRKgy div')->each(function(Crawler $item){
-				return $item->text();
-				
-			});
-			$datos["arrival_2"]=$crawler->filter('div.sc-jtggT.FtBAB:nth-child(2) div.sc-ebFjAB.bAYjan div.sc-VJcYb.fnvAiW')->each(function(Crawler $item){
-				return $item->text();	
+			
+			
+			$datos["aerolinea"]=$crawler->filter('.sta')->each(function(Crawler $item){
+				return $item->text();		
 			});
 		
-
-			$datos["status"]=$crawler->filter('div.sc-cooIXK.cyPgjb div,div.sc-cooIXK.ftwwRJ div')->each(function(Crawler $item){
+			$datos["status-vuelo"]=$crawler->filter('.sts')->each(function(Crawler $item){
 				return $item->text();
-
 			});
-			$datos["tiempos"]=$crawler->filter('div.sc-eKZiaR.DVGzp:first-child div.sc-jtRlXQ.iarms'/*'div.sc-fZwumE.fKxxqu:first-of-type'*/)->each(function(Crawler $itemm){
-				return $itemm->filter('div.sc-likbZx.eNvxJg')->each(function(Crawler $i){
-					return $i->filter('h4,h5')->each(function( Crawler $j){
-						return $j->text();
-					});
-				}); 
-
-			});
-			$datos["status"][0]=$this->traducir($datos["status"][0]);
-			$datos["retrazo"]=false;
-			if(strpos($datos["status"][1],"elayed")){
-				$datos["retrazo"]=true;
-			}
-			}
-
 			
+			$datos["dep"]=$crawler->filter('div.stb')->each(function(Crawler $item){
+				return $item->filter('stg.ste,.stg.ste div:first-child,.stg div:first-child')->each(function(Crawler $item2){
+					return $item2->text();
+				});
+			});
+			for ($i=0; $i < 3; $i++) { 
+				$datos["hora-actual-1"][]=array_pop($datos["dep"][0]);
+				array_pop($datos["dep"][1]);
+			}
+
+		
+			$datos["arr"]=$crawler->filter('div.stb')->each(function(Crawler $item){
+				return $item->filter('stg.ste,.stg.ste div:last-child,.stg div:last-child')->each(function(Crawler $item2){
+					return $item2->text();
+				});
+			});
+			for ($i=0; $i < 3; $i++) { 
+				$datos["hora-actual-2"][]=array_pop($datos["arr"][0]);
+				array_pop($datos["arr"][1]);
+			}
+			$duraciones=$crawler->filter('.stg.ste')->each(function(Crawler $item){
+				return $item->text();
+			});
+
+			foreach($duraciones as $du){
+				if(strpos($du,"uraci")){
+					$datos["duracion"]=$du;
+				}
+
+			}
+			/*
+			if(count($datos["dep"])>1) {
+				$datos["dep"]=array_slice($datos["dep"][0],0,10);
+				$datos["dep"]=array_slice($datos["dep"][1],0,10);
+				$datos["arr"]=array_slice($datos["arr"][0],0,10);
+				$datos["arr"]=array_slice($datos["arr"][1],0,10);
+			}*/
+			
+		
+		//.stg.ste,div.stb:nth-child(6) .stg.ste div:first-child,div.stb:nth-child(6) .stg div:first-child
 
 			$response = new Response();
 		$response->setCache("day");
 		$response->setResponseSubject("Vuelo ".$request->query);
 		$response->createFromTemplate("vuelo.tpl", ["datos"=>$datos]);
 		return $response;
-
+		
 	}
 	public function traducir($estatus){
 		if(array_key_exists($estatus,$this->diccionario)){

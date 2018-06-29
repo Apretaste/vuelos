@@ -32,7 +32,6 @@
 				width: 150px;
 				padding: 1%;
 				text-decoration: none;
-
 			}
 			#datos a{
 				display: block;
@@ -48,8 +47,10 @@
 			a span{
 				font-size: 1.4em;
 			}
+			.oculta{
+				display: none;
 
-
+			}
 
 	</style>
 </head>
@@ -60,8 +61,7 @@
 	
 	<div id="vuelos">
 		{link href="VUELOS AEROPUERTO" caption="Cambiar aeropuerto  <span>&#9992</span>" desc="m:Cambiar aeropuerto [HAVANA,VARADERO,CIEN FUEGOS,CAMAGUEY,HOLGUIN,SANTA CLARA,CAYO COCO,CAYO LARGO,SANTIAGO,MANZANILLO]*" popup="true" wait="true"}
-		{link href="VUELOS VUELO" caption="Buscar Vuelo <span>&#9906</span>" desc="Inroduzca codigo del vuelo.Ejemplo CU 156" popup="true" wait="true"}
-
+		<!--{link href="VUELOS VUELO" caption="Buscar Vuelo <span>&#9906</span>" desc="Inroduzca codigo del vuelo.Ejemplo CU 156" popup="true" wait="true"}-->
 
 {space15}
 	<div id="datos">
@@ -74,15 +74,16 @@
 			<th>Aerolinea</th>
 			<th>Origen</th>
 			<th>Llegada</th>
-			<th>Estatus</th>
+			<!--<th>Estatus</th>-->
 		</tr>
 		{foreach $datos["arrivals"] as $filas}
 		<tr>
 			{foreach $filas as $info}
 
-				<td>
+				<td {if $info==$filas[count($filas)-1]} class="oculta"{/if}>
 					{if $filas[0]==$info}
-						{link href="VUELOS VUELO $info" caption=$info wait="true"}
+						{link href="VUELOS VUELO $info-{$filas[1]}" caption=$info wait="true"}
+						
 					{else}
 						
 						{$info}
@@ -108,14 +109,14 @@
 			<th>Aerolinea</th>
 			<th>Destino</th>
 			<th>Salida</th>
-			<th>Estatus</th>
+			<!--<th>Estatus</th>-->
 		</tr>
 		{foreach $datos["departures"] as $filas}
 		<tr>
 			{foreach $filas as $info}
-				<td>
+				<td {if $info==$filas[count($filas)-1]} class="oculta"{/if}>
 					{if $filas[0]==$info}
-						{link href="VUELOS VUELO $info" caption=$info}
+						{link href="VUELOS VUELO $info-{$filas[1]}" caption=$info}
 					{else}
 						{$info}
 					{/if}
