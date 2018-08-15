@@ -61,7 +61,8 @@
 	
 	<div id="vuelos">
 		{link href="VUELOS AEROPUERTO" caption="Cambiar aeropuerto  <span>&#9992</span>" desc="m:Cambiar aeropuerto [HAVANA,VARADERO,CIEN FUEGOS,CAMAGUEY,HOLGUIN,SANTA CLARA,CAYO COCO,CAYO LARGO,SANTIAGO,MANZANILLO]*" popup="true" wait="true"}
-		<!--{link href="VUELOS VUELO" caption="Buscar Vuelo <span>&#9906</span>" desc="Inroduzca codigo del vuelo.Ejemplo CU 156" popup="true" wait="true"}-->
+
+		{link href="VUELOS NROVUELO" caption="Buscar Vuelo <span>&#9906</span>" desc="t:Numero de vuelo*" popup="true" wait="true"}
 
 {space15}
 	<div id="datos">
