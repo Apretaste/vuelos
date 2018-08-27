@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-	<style type="text/css">
-	
+<style type="text/css">
 #detalle a{
 	background-color: #5EBB47;
 	border: 1px solid #5dbd00;
@@ -31,16 +26,10 @@
 	color: lightgreen;
 }
 
-	</style>
-</head>
-<body>
-	
-	<div id="detalle">
-		{link href="VUELOS" caption="Todos los vuelos"}
-		<div id="message">
-			<p>El vuelo <span>{$vuelo}</span> no existe</p>
-		</div>
+</style>
+<div id="detalle">
+	{link href="VUELOS" caption="Todos los vuelos"}
+	<div id="message">
+		<p>El vuelo <span>{$vuelo}</span> no existe</p>
 	</div>
-
-</body>
-</html>
+</div>
