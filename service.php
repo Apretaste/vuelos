@@ -33,6 +33,12 @@ class Vuelos extends Service
 	}
 	
 	public function _aeropuerto(Request $request){
+		if(!$this->busqueda($request->query)){
+			$response= new Response();
+			$response->setResponseSubject("No encontrado");
+			$response->createFromText("Aeropuerto no encontrado, por favor use las opciones que trae el servicio");
+			return $response;
+		}
 		$response= new Response();
 		$response->setCache("day");
 		$response->setResponseSubject("Aeropuertos de Cuba");
@@ -59,6 +65,8 @@ class Vuelos extends Service
 				"MANZANILLO"=>array("codigo"=>"MZO","desc"=>"Aeropuerto Internacional Sierra Maestra. MAnzanillo de Cuba")
 
 			];
+
+		if(!array_key_exists($aero,$aeropuertos)) return false;
 
 		$client = new Client();
 			$guzzle = $client->getClient();
