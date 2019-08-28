@@ -1,6 +1,0 @@
-<service>
-	<serviceName>vuelos</serviceName>
-	<serviceDescription>Muestra los vuelos que llegan a los aeropuertos de Cuba</serviceDescription>
-	<creatorEmail>vilferalvarez@gmail.com</creatorEmail>
-	<serviceCategory>informativo</serviceCategory>
-</service>

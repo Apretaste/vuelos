@@ -1,0 +1,8 @@
+{
+	"name":"vuelos",
+	"version":"1",
+	"description":"Muestra los vuelos que llegan y salen en los aeropuertos de Cuba",
+	"category":"informativo",
+	"creator":"salvi@apretaste.org",
+	"listed":true
+}
