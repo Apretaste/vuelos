@@ -1,3 +1,13 @@
+//
+// initialize the select
+//
+$(document).ready(function(){
+	$('select').formSelect();
+});
+
+//
+// check if the info is correct and load the airport board
+//
 function check() {
 	// get airport
 	var airport = $('#airport').val();
@@ -18,6 +28,9 @@ function check() {
 	getBoard(airport, type);
 }
 
+//
+// load the airport board
+//
 function getBoard(airport, type) {
 	apretaste.send({
 		'command':'VUELOS BOARD',

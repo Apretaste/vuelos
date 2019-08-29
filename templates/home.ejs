@@ -4,8 +4,8 @@
 		<p>Escoja que aeropuerto desea consultar.</p>
 
 		<div class="input-field">
-			<select id="airport" class="browser-default">
-				<option value="" disabled selected></option>
+			<select id="airport" >
+				<option value="" disabled selected>Escoja un aeropuerto</option>
 				<% airports.forEach(function(airport){ %>
 					<option value="<%= airport.code %>"><%= airport.name %></option>
 				<% }); %>
@@ -15,16 +15,16 @@
 
 		<div class="input-field">
 			<p>
-			<label>
-				<input id="arrivals" name="type" type="radio" />
-				<span>Llegadas (Arrivals)</span>
-			</label>
+				<label>
+					<input id="arrivals" name="type" type="radio" />
+					<span>Llegadas (Arrivals)</span>
+				</label>
 			</p>
 			<p>
-			<label>
-				<input id="departures" name="type" type="radio"/>
-				<span>Salidas (Departures)</span>
-			</label>
+				<label>
+					<input id="departures" name="type" type="radio"/>
+					<span>Salidas (Departures)</span>
+				</label>
 			</p>
 		</div>
 	</div>
