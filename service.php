@@ -7,9 +7,11 @@ class Service
 	/**
 	 * Choose an airport and arrivals/departures
 	 *
-	 * @author salvipascual
-	 * @param Request $request
+	 * @param Request  $request
 	 * @param Response $response
+	 *
+	 * @throws \Exception
+	 * @author salvipascual
 	 */
 	public function _main(Request $request, Response $response)
 	{
@@ -19,6 +21,8 @@ class Service
 		// send data to the view
 		$response->setCache("year");
 		$response->setTemplate("home.ejs", ["airports"=>$airports]);
+
+		Challenges::complete("view-vuelos", $request->person->id);
 	}
 
 	/**
@@ -35,8 +39,12 @@ class Service
 		$type = $request->input->data->type;
 
 		// get the airport's flights board
-		if($type == "arrivals") $board = Flights::getArrivals($airport);
-		if($type == "departures") $board = Flights::getDepartures($airport);
+		if ($type == "arrivals") {
+			$board = Flights::getArrivals($airport);
+		}
+		if ($type == "departures") {
+			$board = Flights::getDepartures($airport);
+		}
 
 		// get the current airport name
 		$airports = $this->getAvailableAirports();
@@ -70,7 +78,7 @@ class Service
 	 * @author salvipascual
 	 * @return Array
 	 */
-	private function getAvailableAirports() 
+	private function getAvailableAirports()
 	{
 		return [
 			["code"=>"HAV", "name"=>"José Martí (La Habana)"],
