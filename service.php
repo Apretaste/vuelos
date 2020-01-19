@@ -5,6 +5,8 @@ use Apretaste\Money;
 use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
+use Framework\Config;
+use Framework\Crawler;
 use Framework\Database;
 use Apretaste\Challenges;
 use Apretaste\Level;
@@ -248,23 +250,16 @@ class Service
 		// contact the API
 		else {
 			// get the API key from the configs
-			$di = Phalcon\DI\FactoryDefault::getDefault();
-			$config = $di->get('config')['flightaware'];
+			$config = Config::pick('flightaware');
 			$username = $config['username'];
 			$apiKey = $config['apiKey'];
 
 			// add params to the URL
 			$url = "https://flightxml.flightaware.com/json/FlightXML2/$entry?" . http_build_query($params);
-
-			// call the api
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_USERPWD, $username . ':' . $apiKey);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$result = curl_exec($ch);
-
-			// get results & close the connection
-			$content = json_decode($result);
-			curl_close($ch);
+			$content = Crawler::get($url, 'GET', null, [],[
+					CURLOPT_USERPWD => $username . ':' . $apiKey,
+					CURLOPT_RETURNTRANSFER => true
+			]);
 
 			// create the cache and return
 			file_put_contents($cache, serialize($content));
