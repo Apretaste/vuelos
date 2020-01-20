@@ -1,23 +1,17 @@
 <?php
 
-use Apretaste\Notifications;
-use Apretaste\Money;
-use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
 use Framework\Config;
 use Framework\Crawler;
-use Framework\Database;
 use Apretaste\Challenges;
-use Apretaste\Level;
-use Framework\Utils;
 
 class Service
 {
 	/**
 	 * Choose an airport and arrivals/departures
 	 *
-	 * @param Request  $request
+	 * @param Request $request
 	 * @param Response $response
 	 *
 	 * @throws \Exception
@@ -30,7 +24,7 @@ class Service
 
 		// send data to the view
 		$response->setCache('year');
-		$response->setTemplate('home.ejs', ['airports' =>$airports]);
+		$response->setTemplate('home.ejs', ['airports' => $airports]);
 
 		Challenges::complete('view-vuelos', $request->person->id);
 	}
@@ -38,7 +32,7 @@ class Service
 	/**
 	 * Check the airport's flights board
 	 *
-	 * @param Request  $request
+	 * @param Request $request
 	 * @param Response $response
 	 *
 	 * @throws \Framework\Alert
@@ -51,10 +45,10 @@ class Service
 		$type = $request->input->data->type;
 
 		// get the airport's flights board
-		if ($type==='arrivals') {
+		if ($type === 'arrivals') {
 			$board = self::getArrivals($airport);
 		}
-		if ($type==='departures') {
+		if ($type === 'departures') {
 			$board = self::getDepartures($airport);
 		}
 
@@ -69,9 +63,9 @@ class Service
 
 		// get content for the view
 		$content = [
-				'type'  => $type,
-				'code'  => $airport,
-				'name'  => $airports[$key]['name'],
+				'type' => $type,
+				'code' => $airport,
+				'name' => $airports[$key]['name'],
 				'board' => $board
 		];
 
@@ -256,7 +250,7 @@ class Service
 
 			// add params to the URL
 			$url = "https://flightxml.flightaware.com/json/FlightXML2/$entry?" . http_build_query($params);
-			$content = Crawler::get($url, 'GET', null, [],[
+			$content = Crawler::get($url, 'GET', null, [], [
 					CURLOPT_USERPWD => $username . ':' . $apiKey,
 					CURLOPT_RETURNTRANSFER => true
 			]);
