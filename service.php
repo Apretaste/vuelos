@@ -2,6 +2,8 @@
 
 use Apretaste\Request;
 use Apretaste\Response;
+use Framework\Config;
+use Framework\Crawler;
 use Apretaste\Challenges;
 
 class Service
@@ -11,8 +13,6 @@ class Service
 	 *
 	 * @param Request $request
 	 * @param Response $response
-	 *
-	 * @throws \Exception
 	 * @author salvipascual
 	 */
 	public function _main(Request $request, Response &$response)
@@ -20,11 +20,12 @@ class Service
 		// get all airports
 		$airports = $this->getAvailableAirports();
 
+		// mark challenge as done
+		Challenges::complete('view-vuelos', $request->person->id);
+
 		// send data to the view
 		$response->setCache('year');
 		$response->setTemplate('home.ejs', ['airports' => $airports]);
-
-		Challenges::complete('view-vuelos', $request->person->id);
 	}
 
 	/**
@@ -32,8 +33,6 @@ class Service
 	 *
 	 * @param Request $request
 	 * @param Response $response
-	 *
-	 * @throws \Framework\Alert
 	 * @author salvipascual
 	 */
 	public function _board(Request $request, Response &$response)
@@ -61,10 +60,10 @@ class Service
 
 		// get content for the view
 		$content = [
-				'type' => $type,
-				'code' => $airport,
-				'name' => $airports[$key]['name'],
-				'board' => $board
+			'type' => $type,
+			'code' => $airport,
+			'name' => $airports[$key]['name'],
+			'board' => $board
 		];
 
 		// send data to the view
@@ -98,7 +97,6 @@ class Service
 	 * Arrivals
 	 *
 	 * @param $airportCode
-	 *
 	 * @return array
 	 */
 	public static function getArrivals($airportCode)
@@ -111,45 +109,48 @@ class Service
 		$res = self::call('Enroute', $params);
 
 		// format outcome
-		foreach ($res->EnrouteResult->enroute as $fl) {
-			$flight = new stdClass();
-			$flight->type = 'Enroute';
-			$flight->number = $fl->ident;
-			$flight->aircrafttype = $fl->aircrafttype;
-			$flight->departuretime = date("H:i", $fl->filed_departuretime);
-			$flight->originCode = $fl->origin;
-			$flight->originName = $fl->originName;
-			$flight->originCity = $fl->originCity;
-			$flight->arrivaltime = date("H:i", $fl->estimatedarrivaltime);
-			$flight->destinationCode = $fl->destination;
-			$flight->destinationName = $fl->destinationName;
-			$flight->destinationCity = $fl->destinationCity;
-			$flights[] = $flight;
+		if(isset($res->EnrouteResult)) {
+			foreach ($res->EnrouteResult->enroute as $fl) {
+				$flight = new stdClass();
+				$flight->type = 'Enroute';
+				$flight->number = $fl->ident;
+				$flight->aircrafttype = $fl->aircrafttype;
+				$flight->departuretime = date("H:i", $fl->filed_departuretime);
+				$flight->originCode = $fl->origin;
+				$flight->originName = $fl->originName;
+				$flight->originCity = $fl->originCity;
+				$flight->arrivaltime = date("H:i", $fl->estimatedarrivaltime);
+				$flight->destinationCode = $fl->destination;
+				$flight->destinationName = $fl->destinationName;
+				$flight->destinationCity = $fl->destinationCity;
+				$flights[] = $flight;
+			}	
 		}
 
 		// get flights that arrived
 		$res = self::call('Arrived', $params);
 
 		// format outcome
-		foreach ($res->ArrivedResult->arrivals as $fl) {
-			$flight = new stdClass();
-			$flight->type = 'Arrived';
-			$flight->number = $fl->ident;
-			$flight->aircrafttype = $fl->aircrafttype;
-			$flight->departuretime = date("H:i", $fl->actualdeparturetime);
-			$flight->originCode = $fl->origin;
-			$flight->originName = $fl->originName;
-			$flight->originCity = $fl->originCity;
-			$flight->arrivaltime = date("H:i", $fl->actualarrivaltime);
-			$flight->destinationCode = $fl->destination;
-			$flight->destinationName = $fl->destinationName;
-			$flight->destinationCity = $fl->destinationCity;
-			$flights[] = $flight;
+		if(isset($res->ArrivedResult)) {
+			foreach ($res->ArrivedResult->arrivals as $fl) {
+				$flight = new stdClass();
+				$flight->type = 'Arrived';
+				$flight->number = $fl->ident;
+				$flight->aircrafttype = $fl->aircrafttype;
+				$flight->departuretime = date("H:i", $fl->actualdeparturetime);
+				$flight->originCode = $fl->origin;
+				$flight->originName = $fl->originName;
+				$flight->originCity = $fl->originCity;
+				$flight->arrivaltime = date("H:i", $fl->actualarrivaltime);
+				$flight->destinationCode = $fl->destination;
+				$flight->destinationName = $fl->destinationName;
+				$flight->destinationCity = $fl->destinationCity;
+				$flights[] = $flight;
+			}	
 		}
 
 		// sort by arrival time
-		function cmp($a, $b)
-		{
+		function cmp($a, $b) {
 			return strcmp($a->arrivaltime, $b->arrivaltime);
 		}
 		usort($flights, "cmp");
@@ -176,45 +177,48 @@ class Service
 		$res = self::call('Scheduled', $params);
 
 		// format outcome
-		foreach ($res->ScheduledResult->scheduled as $fl) {
-			$flight = new stdClass();
-			$flight->type = 'Scheduled';
-			$flight->number = $fl->ident;
-			$flight->aircrafttype = $fl->aircrafttype;
-			$flight->departuretime = date("H:i", $fl->filed_departuretime);
-			$flight->originCode = $fl->origin;
-			$flight->originName = $fl->originName;
-			$flight->originCity = $fl->originCity;
-			$flight->arrivaltime = date("H:i", $fl->estimatedarrivaltime);
-			$flight->destinationCode = $fl->destination;
-			$flight->destinationName = $fl->destinationName;
-			$flight->destinationCity = $fl->destinationCity;
-			$flights[] = $flight;
+		if(isset($res->ScheduledResult)) {
+			foreach ($res->ScheduledResult->scheduled as $fl) {
+				$flight = new stdClass();
+				$flight->type = 'Scheduled';
+				$flight->number = $fl->ident;
+				$flight->aircrafttype = $fl->aircrafttype;
+				$flight->departuretime = date("H:i", $fl->filed_departuretime);
+				$flight->originCode = $fl->origin;
+				$flight->originName = $fl->originName;
+				$flight->originCity = $fl->originCity;
+				$flight->arrivaltime = date("H:i", $fl->estimatedarrivaltime);
+				$flight->destinationCode = $fl->destination;
+				$flight->destinationName = $fl->destinationName;
+				$flight->destinationCity = $fl->destinationCity;
+				$flights[] = $flight;
+			}			
 		}
 
 		// get flights that arrived
 		$res = self::call('Departed', $params);
 
 		// format outcome
-		foreach ($res->DepartedResult->departures as $fl) {
-			$flight = new stdClass();
-			$flight->type = 'Departed';
-			$flight->number = $fl->ident;
-			$flight->aircrafttype = $fl->aircrafttype;
-			$flight->departuretime = date("H:i", $fl->actualdeparturetime);
-			$flight->originCode = $fl->origin;
-			$flight->originName = $fl->originName;
-			$flight->originCity = $fl->originCity;
-			$flight->arrivaltime = date("H:i", $fl->estimatedarrivaltime);
-			$flight->destinationCode = $fl->destination;
-			$flight->destinationName = $fl->destinationName;
-			$flight->destinationCity = $fl->destinationCity;
-			$flights[] = $flight;
+		if(isset($res->DepartedResult)) {
+			foreach ($res->DepartedResult->departures as $fl) {
+				$flight = new stdClass();
+				$flight->type = 'Departed';
+				$flight->number = $fl->ident;
+				$flight->aircrafttype = $fl->aircrafttype;
+				$flight->departuretime = date("H:i", $fl->actualdeparturetime);
+				$flight->originCode = $fl->origin;
+				$flight->originName = $fl->originName;
+				$flight->originCity = $fl->originCity;
+				$flight->arrivaltime = date("H:i", $fl->estimatedarrivaltime);
+				$flight->destinationCode = $fl->destination;
+				$flight->destinationName = $fl->destinationName;
+				$flight->destinationCity = $fl->destinationCity;
+				$flights[] = $flight;
+			}
 		}
 
 		// sort by arrival time
-		function cmp($a, $b)
-		{
+		function cmp($a, $b) {
 			return strcmp($a->arrivaltime, $b->arrivaltime);
 		}
 		usort($flights, "cmp");
@@ -224,17 +228,16 @@ class Service
 	}
 
 	/**
-	 * Curl
+	 * Call the flights API
 	 *
 	 * @param $entry
 	 * @param $params
-	 *
 	 * @return mixed
 	 */
 	private static function call($entry, $params)
 	{
 		// get content from cache
-		$cache = TEMP_PATH . "flights_$entry" . md5(json_encode($params)) . date("YmH") . ".cache";
+		$cache = TEMP_PATH . 'cache/flights_$entry' . md5(json_encode($params)) . date("YmH") . '.cache';
 		if (file_exists($cache)) {
 			$content = unserialize(file_get_contents($cache));
 		}
@@ -242,29 +245,22 @@ class Service
 		// contact the API
 		else {
 			// get the API key from the configs
-			$di = Phalcon\DI\FactoryDefault::getDefault();
-			$config = $di->get('config')['flightaware'];
+			$config = Config::pick('flightaware');
 			$username = $config['username'];
 			$apiKey = $config['apiKey'];
 
 			// add params to the URL
 			$url = "https://flightxml.flightaware.com/json/FlightXML2/$entry?" . http_build_query($params);
-
-			// call the api
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_USERPWD, $username . ':' . $apiKey);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$result = curl_exec($ch);
-
-			// get results & close the connection
-			$content = json_decode($result);
-			curl_close($ch);
+			$content = Crawler::get($url, 'GET', null, [], [
+				CURLOPT_USERPWD => $username . ':' . $apiKey,
+				CURLOPT_RETURNTRANSFER => true
+			]);
 
 			// create the cache and return
 			file_put_contents($cache, serialize($content));
 		}
 
 		// return content
-		return $content;
+		return json_decode($content);
 	}
 }
