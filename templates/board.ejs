@@ -17,37 +17,41 @@
 			<a href="#!" onclick="getBoard('<%= code %>', '<%= oppositeType %>')">Cambiar a <%= oppositeName %></a>
 		</blockquote>
 
-		<table class="striped">
-		<thead>
-			<tr>
-				<th></th>
-				<th>Número</th>
-				<th>Salida</th>
-				<th>Llegada</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% board.forEach(function(flight){ %>
+		<% if(board.length) { %>
+			<table class="striped">
+			<thead>
 				<tr>
-					<td>
-						<% if(flight.type=='Scheduled'){ %><i class="material-icons">schedule</i><% } %>
-						<% if(flight.type=='Departed'){ %><i class="material-icons">flight_takeoff</i><% } %>
-						<% if(flight.type=='Enroute'){ %><i class="material-icons">flight</i><% } %>
-						<% if(flight.type=='Arrived'){ %><i class="material-icons">flight_land</i><% } %>
-					</td>
-					<td><span class="tag"><%= flight.number %></span></td>
-					<td>
-						<div class="large"><%= flight.departuretime %></div>
-						<%= flight.originCity %>
-					</td>
-					<td>
-						<div class="large"><%= flight.arrivaltime %></div>
-						<%= flight.destinationCity %>
-					</td>
+					<th></th>
+					<th>Número</th>
+					<th>Salida</th>
+					<th>Llegada</th>
 				</tr>
-			<% }); %>
-		</tbody>
-		</table>
+			</thead>
+			<tbody>
+				<% board.forEach(function(flight){ %>
+					<tr>
+						<td>
+							<% if(flight.type=='Scheduled'){ %><i class="material-icons">schedule</i><% } %>
+							<% if(flight.type=='Departed'){ %><i class="material-icons">flight_takeoff</i><% } %>
+							<% if(flight.type=='Enroute'){ %><i class="material-icons">flight</i><% } %>
+							<% if(flight.type=='Arrived'){ %><i class="material-icons">flight_land</i><% } %>
+						</td>
+						<td><span class="tag"><%= flight.number %></span></td>
+						<td>
+							<div class="large"><%= flight.departuretime %></div>
+							<%= flight.originCity %>
+						</td>
+						<td>
+							<div class="large"><%= flight.arrivaltime %></div>
+							<%= flight.destinationCity %>
+						</td>
+					</tr>
+				<% }); %>
+			</tbody>
+			</table>
+		<% } else { %>
+			<p>No hemos encontrado resultados ahora. Puede que no hallan sido enviados a la pizarra de vuelos aún. Por favor espere una hora e intente nuevamente.</p>
+		<% } %>
 	</div>
 </div>
 
