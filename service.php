@@ -23,9 +23,11 @@ class Service
 		// mark challenge as done
 		Challenges::complete('view-vuelos', $request->person->id);
 
+		$images = [SERVICE_PATH . 'vuelos' . "/images/main_logo.png"];
+
 		// send data to the view
 		$response->setCache('year');
-		$response->setTemplate('home.ejs', ['airports' => $airports]);
+		$response->setTemplate('home.ejs', ['airports' => $airports], $images);
 	}
 
 	/**
@@ -74,8 +76,8 @@ class Service
 	/**
 	 * Check the airport's flights board
 	 *
-	 * @author salvipascual
 	 * @return array
+	 * @author salvipascual
 	 */
 	private function getAvailableAirports()
 	{
@@ -109,7 +111,7 @@ class Service
 		$res = self::call('Enroute', $params);
 
 		// format outcome
-		if(isset($res->EnrouteResult)) {
+		if (isset($res->EnrouteResult)) {
 			foreach ($res->EnrouteResult->enroute as $fl) {
 				$flight = new stdClass();
 				$flight->type = 'Enroute';
@@ -124,14 +126,14 @@ class Service
 				$flight->destinationName = $fl->destinationName;
 				$flight->destinationCity = $fl->destinationCity;
 				$flights[] = $flight;
-			}	
+			}
 		}
 
 		// get flights that arrived
 		$res = self::call('Arrived', $params);
 
 		// format outcome
-		if(isset($res->ArrivedResult)) {
+		if (isset($res->ArrivedResult)) {
 			foreach ($res->ArrivedResult->arrivals as $fl) {
 				$flight = new stdClass();
 				$flight->type = 'Arrived';
@@ -146,13 +148,15 @@ class Service
 				$flight->destinationName = $fl->destinationName;
 				$flight->destinationCity = $fl->destinationCity;
 				$flights[] = $flight;
-			}	
+			}
 		}
 
 		// sort by arrival time
-		function cmp($a, $b) {
+		function cmp($a, $b)
+		{
 			return strcmp($a->arrivaltime, $b->arrivaltime);
 		}
+
 		usort($flights, "cmp");
 
 		// return all flights
@@ -177,7 +181,7 @@ class Service
 		$res = self::call('Scheduled', $params);
 
 		// format outcome
-		if(isset($res->ScheduledResult)) {
+		if (isset($res->ScheduledResult)) {
 			foreach ($res->ScheduledResult->scheduled as $fl) {
 				$flight = new stdClass();
 				$flight->type = 'Scheduled';
@@ -192,14 +196,14 @@ class Service
 				$flight->destinationName = $fl->destinationName;
 				$flight->destinationCity = $fl->destinationCity;
 				$flights[] = $flight;
-			}			
+			}
 		}
 
 		// get flights that arrived
 		$res = self::call('Departed', $params);
 
 		// format outcome
-		if(isset($res->DepartedResult)) {
+		if (isset($res->DepartedResult)) {
 			foreach ($res->DepartedResult->departures as $fl) {
 				$flight = new stdClass();
 				$flight->type = 'Departed';
@@ -218,9 +222,11 @@ class Service
 		}
 
 		// sort by arrival time
-		function cmp($a, $b) {
+		function cmp($a, $b)
+		{
 			return strcmp($a->arrivaltime, $b->arrivaltime);
 		}
+
 		usort($flights, "cmp");
 
 		// return all flights
@@ -240,9 +246,7 @@ class Service
 		$cache = TEMP_PATH . 'cache/flights_$entry' . md5(json_encode($params)) . date("YmH") . '.cache';
 		if (file_exists($cache)) {
 			$content = unserialize(file_get_contents($cache));
-		}
-
-		// contact the API
+		} // contact the API
 		else {
 			// get the API key from the configs
 			$config = Config::pick('flightaware');
