@@ -23,11 +23,9 @@ class Service
 		// mark challenge as done
 		Challenges::complete('view-vuelos', $request->person->id);
 
-		$images = [SERVICE_PATH . 'vuelos' . "/images/main_logo.png"];
-
 		// send data to the view
 		$response->setCache('year');
-		$response->setTemplate('home.ejs', ['airports' => $airports], $images);
+		$response->setTemplate('home.ejs', ['airports' => $airports]);
 	}
 
 	/**
@@ -246,7 +244,9 @@ class Service
 		$cache = TEMP_PATH . 'cache/flights_$entry' . md5(json_encode($params)) . date("YmH") . '.cache';
 		if (file_exists($cache)) {
 			$content = unserialize(file_get_contents($cache));
-		} // contact the API
+		}
+
+		// contact the API
 		else {
 			// get the API key from the configs
 			$config = Config::pick('flightaware');

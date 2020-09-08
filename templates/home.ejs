@@ -1,39 +1,41 @@
 <div class="row home">
-    <div class="col s12">
-        <div class="center-align">
-            <img src="{{APP_SERVICE_PATH}}/images/main_logo.png" alt="logo">
-        </div>
+	<div class="col s12 center-align">
+		<span class="main-icon fa-stack fa-5x">
+			<i class="fas fa-circle fa-stack-2x green-text"></i>
+			<i class="fas fa-plane-arrival fa-stack-1x fa-inverse"></i>
+		</span>
 
-        <div class="input-field">
-            <select id="airport">
-                <% airports.forEach(function(airport){ %>
-                    <option value="<%= airport.code %>"><%= airport.name %></option>
-                <% }); %>
-            </select>
-            <label for="airport">Escoja un aeropuerto</label>
-        </div>
+		<div class="input-field">
+			<select id="airport">
+				<% airports.forEach(function(airport){ %>
+					<option value="<%= airport.code %>"><%= airport.name %></option>
+				<% }); %>
+			</select>
+			<label for="airport">Escoja un aeropuerto</label>
+		</div>
 
-        <div class="input-field">
-            <p>
-                <label>
-                    <input id="arrivals" name="type" type="radio"/>
-                    <span>Llegadas (Arrivals)</span>
-                </label>
-            </p>
-            <p>
-                <label>
-                    <input id="departures" name="type" type="radio"/>
-                    <span>Salidas (Departures)</span>
-                </label>
-            </p>
-        </div>
-    </div>
+		<div class="input-field left-align">
+			<p>
+				<label>
+					<input id="arrivals" name="type" type="radio"/>
+					<span>Llegadas (Arrivals)</span>
+				</label>
+			</p>
+			<p>
+				<label>
+					<input id="departures" name="type" type="radio"/>
+					<span>Salidas (Departures)</span>
+				</label>
+			</p>
+		</div>
+	</div>
 </div>
 
 <div class="bottom-space"></div>
 
 <!-- SUBMIT -->
 <div class="fixed-action-btn">
-    <a class="btn-floating btn-large waves-effect waves-light green" href="#!" onclick="check()"><i
-                class="material-icons">send</i></a>
+	<a class="btn-floating btn-large waves-effect waves-light green" href="#!" onclick="check()">
+		<i class="material-icons">send</i>
+	</a>
 </div>

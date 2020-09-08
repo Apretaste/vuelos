@@ -1,6 +1,7 @@
 {
 	"name": "vuelos",
 	"caption": "Vuelos",
+	"icon": "fas fa-plane-arrival",
 	"description": "Muestra los vuelos que llegan y salen en los aeropuertos de Cuba",
 	"category": "informativo",
 	"creator": "salvi@apretaste.org",
